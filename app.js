@@ -14,6 +14,7 @@ app.use(cors())
 // import routes
 const postRoutes = require('./routes/post')
 
+
 app.use('/post', postRoutes)
 
 app.get('/', (req, res) => {
@@ -22,7 +23,7 @@ app.get('/', (req, res) => {
 
 mongoose.connect(process.env.DB_CONNECTION, {
     useNewUrlParser: true,
-    useUnifieldTopology: true
+    useUnifiedTopology: true
 })
 let db = mongoose.connection
 

@@ -1,6 +1,9 @@
-const mongoose =  require('mongoose')
+const req = require('express/lib/request')
+const res = require('express/lib/response')
+const mongoose = require('mongoose')
+const router = require('../routes/post')
 
-const postSchema =  mongoose.Schema({
+const postSchema = mongoose.Schema({
     content: {
         type: String,
         require: true
@@ -18,9 +21,11 @@ const postSchema =  mongoose.Schema({
         default: null
     },
     username: {
-         type: String,
-         require: true
+        type: String,
+        require: true
     }
+}, {
+    versionKey: false
 })
 
-module.exports = mongoose.model('Post', postSchema)
+module.exports = mongoose.model('Post', postSchema, 'post')
