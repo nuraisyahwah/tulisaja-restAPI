@@ -2,52 +2,52 @@ const express = require('express')
 const router = express.Router()
 const Post = require('../models/Post')
 
-router.post('/', async (req, res) => {
-    const inputPost = new Post({
-        content: req.body.content,
-        user_id: req.body.user_id,
-        username: req.body.username
-    })
+function result(succ, msg, details) {
+  if (details) {
+    return {
+      succes: succ,
+      message: msg,
+      data: details,
+    };
+  } else {
+    return {
+      succes: succ,
+      message: msg,
+    };
+  }
+}
 
+router.get('/', async (req, res) => {
     try {
-        const post = await inputPost.save()
-        res.json(post)
-    } catch (error) {
-        res.json({
-            message: error
-        })
+         const post = await Post.aggregate([
+            {
+                $lookup: {
+                    from: 'user',
+                    localField: 'user_id',
+                    foreignField:'_id',
+                    as: 'userData'
+                }
+            },
+            {
+                $set: {
+                    id: '$_id',
+                    username: { $arrayElemAt: [ '$UserData.username', 0 ] },
+                    created_date: { $dateToString: { format: '%d-%m-%Y %H:%M:%S', date: ' $created_date', timezone: ' +07:00'} },
+                    modified_date: { $dateToString: { format: '%d-%m-%Y %H:%M:%S', date: ' $created_date', timezone: ' +07:00'} },
+                }
+            },
+            {
+                $projrct: {
+                    userData: 0,
+                    _id: 0 
+                }
+            }
+         ]);
+
+         if (post.length > 0 ) {
+            res.status(200).json(result(1, 'Retrive Data Success!', post))
+         } else {
+            res.status(200).json(result(1, 'Retrieve Data Success!',post))
+         }
     }
 })
-
-router.put('/:postId', async (req, res) => {
-    const data = {
-        content: req.body.content,
-    }
-    try {
-        const post = await Post.updateOne({
-            _id: req.params.postId
-        }, data)
-        res.json(post)
-    } catch (error) {
-        res.json({
-            message: error
-        })
-    }
-})
-
-router.delete('/:postId', async (req, res) => {
-    try {
-        const post = await Post.deleteOne({
-            _id: req.params.postId
-        })
-        res.json(post)
-    } catch (error) {
-        res.json({
-            message: error
-        })
-    }
-})
-
-
-
-module.exports = router
