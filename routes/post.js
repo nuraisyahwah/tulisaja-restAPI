@@ -47,7 +47,9 @@ router.get('/', async (req, res) => {
          if (post.length > 0 ) {
             res.status(200).json(result(1, 'Retrive Data Success!', post))
          } else {
-            res.status(200).json(result(1, 'Retrieve Data Success!',post))
+            res.status(200).json(result(1, 'Zero Data!'))
          }
+    } catch (error){
+        res.status(500).json(result(0,error.message))
     }
 })
