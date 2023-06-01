@@ -1,4 +1,4 @@
-const mongoose =  require('mongoose')
+const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
     username: {
@@ -16,12 +16,21 @@ const userSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    modified_date:{
+    modified_date: {
         type: Date,
         dafault_date: null
     }
-},{
+}, {
     versionKey: false
 })
 
-module.exprorts = mongoose.model('user', userSchema,'user')
+userSchema.method('toJSON', function () {
+    const {
+        _id,
+        ...Object
+    } = this.toObject()
+    Object.id = _id
+    Object.created_date = created_date
+})
+
+module.exprorts = mongoose.model('user', userSchema, 'user')

@@ -3,7 +3,7 @@ const app = express()
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-require('dotenv/config')
+require('dotenv').config()
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -12,9 +12,10 @@ app.use(bodyParser.json());
 app.use(cors())
 
 // import routes
+const authRoutes = require('./routes/auth')
 const postRoutes = require('./routes/post')
 
-
+app.use('/auth', authRoutes)
 app.use('/post', postRoutes)
 
 app.get('/', (req, res) => {
